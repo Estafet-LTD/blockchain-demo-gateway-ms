@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: validator-gateway-ms-build-config
+  name: blockchain-gateway-ms-build-config
 parameters:
 - description: Defines the namespace within which these objects are deployed
   name: NAMESPACE
@@ -16,11 +16,11 @@ parameters:
   required: true
 - description: Defines name of the microservice
   name: MICROSERVICE
-  value: validator-gateway-ms
+  value: blockchain-gateway-ms
   required: true
 - description: Defines the git repository uri within which the microservice resides
   name: MICROSERVICE_REPO_URI
-  value: estafet-blockchain-demo-validator-gateway-ms
+  value: estafet-blockchain-demo-blockchain-gateway-ms
   required: true
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF

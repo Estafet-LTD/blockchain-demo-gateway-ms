@@ -1,4 +1,4 @@
-package com.estafet.blockchain.demo.validator.gateway.ms.model;
+package com.estafet.blockchain.demo.blockchain.gateway.ms.model;
 
 public class API {
 

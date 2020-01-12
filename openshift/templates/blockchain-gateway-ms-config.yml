@@ -2,14 +2,14 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: validator-gateway-ms-config
+  name: blockchain-gateway-ms-config
 parameters:
 - description: Defines the namespace within which these objects are deployed
   name: NAMESPACE
   required: true
 - description: Defines name of the microservice
   name: MICROSERVICE
-  value: validator-gateway-ms
+  value: blockchain-gateway-ms
   required: true
 - description: Defines max memory
   name: MAX_MEMORY

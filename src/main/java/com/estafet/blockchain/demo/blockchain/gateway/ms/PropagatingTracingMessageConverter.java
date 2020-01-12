@@ -1,4 +1,4 @@
-package com.estafet.blockchain.demo.validator.gateway.ms;
+package com.estafet.blockchain.demo.blockchain.gateway.ms;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
