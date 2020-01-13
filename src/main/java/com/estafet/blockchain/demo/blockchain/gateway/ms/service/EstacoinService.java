@@ -39,13 +39,11 @@ public class EstacoinService {
 	@Autowired
 	TransactionHashConfirmationProducer transactionHashConfirmationProducer;
 
-	Credentials credentials = Credentials.create("731D5FBCC334AE85BA6BED3501D3353D6600B2BBA9995211C69793E9FDBE8DA9");
-
 	public Integer getBalance(String address) {
 		Span span = tracer.buildSpan("EstacoinService.getBalance").start();
 		try {
 			span.setBaggageItem("address", address);
-			Estacoin contract = Estacoin.load(EstacoinTransfer.BANK_ADDRESS, web3j, credentials,
+			Estacoin contract = Estacoin.load(EstacoinTransfer.BANK_ADDRESS, web3j, credentials(),
 					new DefaultGasProvider());
 			return contract.balanceOf(address).send().intValue();
 		} catch (Exception e) {
@@ -55,13 +53,17 @@ public class EstacoinService {
 		}
 	}
 
+	private Credentials credentials() {
+		return Credentials.create(System.getenv("ETHEREUM_CREDENTIALS"));
+	}
+
 	public String transfer(String fromAddress, String toAddress, int amount) {
 		Span span = tracer.buildSpan("EstacoinService.transfer").start();
 		try {
 			span.setBaggageItem("fromAddress", fromAddress);
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", Integer.toString(amount));
-			Estacoin contract = Estacoin.load(fromAddress, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+			Estacoin contract = Estacoin.load(fromAddress, web3j, credentials(), GAS_PRICE, GAS_LIMIT);
 			TransactionReceipt tr = contract.transfer(toAddress, BigInteger.valueOf(amount)).send();
 			return tr.getTransactionHash();
 		} catch (Exception e) {

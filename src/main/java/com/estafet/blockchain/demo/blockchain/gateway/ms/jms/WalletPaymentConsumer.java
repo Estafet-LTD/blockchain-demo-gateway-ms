@@ -5,7 +5,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.service.EstacoinService;
-import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.WalletPaymentMessage;
 
 import io.opentracing.Tracer;
