@@ -14,6 +14,60 @@
 	<properties>
 		<microservice>blockchain-gateway-ms</microservice>
 	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.web3j</groupId>
+			<artifactId>web3j-spring-boot-starter</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.web3j</groupId>
+			<artifactId>core</artifactId>
+			<version>4.5.11</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.estafet.blockchain.demo</groupId>
+			<artifactId>estafet-blockchain-demo-messages-lib</artifactId>
+			<version>0.0.8</version>
+		</dependency>		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.web3j</groupId>
+				<artifactId>web3j-maven-plugin</artifactId>
+				<version>4.2.0</version>
+				<configuration>
+					<packageName>com.estafet.blockchain.demo.blockchain.gateway.ms.web3j</packageName>
+					<sourceDestination>${basedir}/target/generated-sources/contracts</sourceDestination>
+					<soliditySourceFiles>
+						<directory>${basedir}/src/main/resources/truffle/contracts</directory>
+						<includes>
+							<include>**/*.sol</include>
+						</includes>
+					</soliditySourceFiles>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<scm>
 		<connection>scm:git:https://github.com/Estafet-LTD/estafet-blockchain-demo-blockchain-gateway-ms.git</connection>

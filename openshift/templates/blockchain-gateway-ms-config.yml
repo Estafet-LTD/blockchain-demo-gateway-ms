@@ -78,8 +78,8 @@ objects:
                 value: 'tcp://broker-amq-tcp.${NAMESPACE}.svc:61616'
               - name: JBOSS_A_MQ_BROKER_USER
                 value: amq          
-              - name: ETHEREUM_API_SERVICE_URI
-                value: 'http://${ENV}ethereum-api.${NAMESPACE}.svc:8545'
+              - name: ETHEREUM_SERVICE_API_URL
+                value: 'http://${ENV}go-ethereum.${NAMESPACE}.svc:8545'
               - name: JAEGER_SAMPLER_TYPE
                 value: const
               - name: JAEGER_SAMPLER_PARAM
