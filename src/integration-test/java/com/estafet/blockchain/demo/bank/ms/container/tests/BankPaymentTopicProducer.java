@@ -5,7 +5,7 @@ import com.estafet.microservices.scrum.lib.commons.jms.TopicProducer;
 public class BankPaymentTopicProducer extends TopicProducer {
 
 	public BankPaymentTopicProducer() {
-		super("bank.payment.topic");
+		super("currency.converter.out.topic");
 	}
 	
 	public static void send(String message) {

@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
+import com.estafet.demo.commons.lib.wallet.WalletUtils;
 import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 
 import io.restassured.RestAssured;
@@ -24,7 +25,7 @@ import io.restassured.http.ContentType;
 @ContextConfiguration
 public class ITBlockchainGatewayTest {
 
-	CurrencyConverterConsumer topic = new CurrencyConverterConsumer();
+	TransactionConfirmationTopicConsumer topic = new TransactionConfirmationTopicConsumer();
 	
 	@Before
 	public void before() {
@@ -37,23 +38,18 @@ public class ITBlockchainGatewayTest {
 	}
 
 	@Test
-	public void testGetAccount() {
+	public void testGetBankBalance() {
 		get("/balance/" + WalletTransfer.BANK_ADDRESS).then()
 			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("id", is(1000))
-			.body("walletAddress", is("abcd"))
-			.body("accountName", is("Dennis"))
-			.body("publicKey", is("dddd"))
-			.body("currency", is("USD"))
-			.body("balance",is(150.0f))
-			.body("pendingBalance",is(0.0f))
-			.body("pending", is(false));		
+			.body("balance", is(100000000));		
 	}
 
 	@Test
-	public void testCredit() {
+	public void testTransferBanktoWallet() {
+		WalletUtils.generateWalletAddress();
+		
 		given().contentType(ContentType.JSON)
-			.body("{ \"amount\": 7800.67 }")
+			.body("{ \"cryptoAmount\": 10, \" }")
 			.when()
 				.post("/account/2000/credit")
 			.then()
