@@ -78,8 +78,8 @@ objects:
                 value: 'tcp://broker-amq-tcp.${NAMESPACE}.svc:61616'
               - name: JBOSS_A_MQ_BROKER_USER
                 value: amq          
-              - name: ETHEREUM_SERVICE_HOST
-                value: 'go-ethereum.${NAMESPACE}.svc:8545'
+              - name: ETHEREUM_SERVICE_API_URL
+                value: 'http://go-ethereum.${NAMESPACE}.svc:8545'
               - name: ETHEREUM_CREDENTIALS
                 value: '731D5FBCC334AE85BA6BED3501D3353D6600B2BBA9995211C69793E9FDBE8DA9'
               - name: JAEGER_SAMPLER_TYPE
