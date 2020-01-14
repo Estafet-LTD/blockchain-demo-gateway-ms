@@ -46,7 +46,7 @@ public class EstacoinService {
 			span.setBaggageItem("address", address);
 			Estacoin contract = Estacoin.load(WalletTransfer.CONTRACT_ADDRESS, web3j, credentials(),
 					new DefaultGasProvider());
-			return new WalletBalance(address, contract.balanceOf(address).send().intValue());
+			return new WalletBalance(address, contract.totalSupply().send().intValue());
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
