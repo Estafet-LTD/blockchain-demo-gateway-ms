@@ -15,6 +15,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
+import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessage;
+import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentConfirmationMessage;
+import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
+import com.estafet.blockchain.demo.messages.lib.wallet.WalletPaymentMessage;
 import com.estafet.demo.commons.lib.wallet.WalletUtils;
 import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 
@@ -25,7 +29,8 @@ import io.restassured.http.ContentType;
 @ContextConfiguration
 public class ITBlockchainGatewayTest {
 
-	TransactionConfirmationTopicConsumer topic = new TransactionConfirmationTopicConsumer();
+	BankPaymentConfirmationTopicConsumer bankPaymentConfirmationTopicConsumer = new BankPaymentConfirmationTopicConsumer();
+	UpdateWalletBalanceTopicConsumer updateWalletBalanceTopicConsumer = new UpdateWalletBalanceTopicConsumer();	
 	
 	@Before
 	public void before() {
@@ -34,46 +39,83 @@ public class ITBlockchainGatewayTest {
 
 	@After
 	public void after() {
-		topic.closeConnection();
+		bankPaymentConfirmationTopicConsumer.closeConnection();
+		updateWalletBalanceTopicConsumer.closeConnection();
 	}
 
 	@Test
-	public void testGetBankBalance() {
-		get("/balance/" + WalletTransfer.BANK_ADDRESS).then()
-			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("balance", is(100000000));		
-	}
-
-	@Test
-	public void testTransferBanktoWallet() {
-		WalletUtils.generateWalletAddress();
+	public void testRestTransfer() {
+		String bankAddress = PropertyUtils.instance().getProperty("BANK_ADDRESS");
+		String toAddress = WalletUtils.generateWalletAddress();
+		WalletTransfer transfer = new WalletTransfer();
+		transfer.setAmount(40);
+		transfer.setFromAddress(bankAddress);
+		transfer.setToAddress(toAddress);
 		
 		given().contentType(ContentType.JSON)
-			.body("{ \"cryptoAmount\": 10, \" }")
+			.body(transfer.toJSON())
 			.when()
-				.post("/account/2000/credit")
+				.post("/transfer")
 			.then()
-				.statusCode(HttpURLConnection.HTTP_OK)
-				.body("id", is(2000))
-				.body("balance", is(13200.67f))
-				.body("pending", is(false));
-	}
-
-	@Test
-	public void testDedit() {
-		given().contentType(ContentType.JSON)
-			.body("{ \"amount\": 20.0 }")
-			.when()
-				.post("/account/1000/debit")
-			.then()
-				.statusCode(HttpURLConnection.HTTP_OK)
-				.body("id", is(1000))
-				.body("currency", is("USD"))
-				.body("balance", is(150.00f))
-				.body("pendingBalance", is(-20.00f))
-				.body("pending", is(true));;
+				.statusCode(HttpURLConnection.HTTP_OK);
+		
+		get("/balance/" + bankAddress).then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body("balance", is(40));		
 	}
 	
+	@Test
+	public void testBank2Wallet() {
+		String walletAddress = WalletUtils.generateWalletAddress();
+		BankPaymentBlockChainMessage bankPaymentBlockChainMessage = new BankPaymentBlockChainMessage();
+		bankPaymentBlockChainMessage.setCryptoAmount(40);
+		bankPaymentBlockChainMessage.setTransactionId("dhdhdhd");
+		bankPaymentBlockChainMessage.setWalletAddress(walletAddress);
+		bankPaymentBlockChainMessage.setSignature("djddjdj");
+		BankPaymentTopicProducer.send(bankPaymentBlockChainMessage.toJSON());
+		BankPaymentConfirmationMessage confirmationMessage = bankPaymentConfirmationTopicConsumer.consume();
+		assertEquals("dhdhdhd", confirmationMessage.getTransactionId());
+		get("/balance/" + walletAddress).then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body("balance", is(547447373));
+	}
+	
+	@Test
+	public void testWallet2Wallet() {
+		String bankAddress = PropertyUtils.instance().getProperty("BANK_ADDRESS");
+		String wallet1 = WalletUtils.generateWalletAddress();
+		String wallet2 = WalletUtils.generateWalletAddress();
+		
+		WalletTransfer initialTransferWallet1 = new WalletTransfer();
+		initialTransferWallet1.setAmount(240);
+		initialTransferWallet1.setFromAddress(bankAddress);
+		initialTransferWallet1.setToAddress(wallet1);
+		
+		get("/balance/" + wallet1).then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body("balance", is(240));
+		
+		WalletTransfer initialTransferWallet2 = new WalletTransfer();
+		initialTransferWallet2.setAmount(30);
+		initialTransferWallet2.setFromAddress(bankAddress);
+		initialTransferWallet2.setToAddress(wallet2);
+		
+		get("/balance/" + wallet2).then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body("balance", is(30));
+		
+		WalletPaymentMessage walletPaymentMessage = new WalletPaymentMessage();
+		walletPaymentMessage.setCryptoAmount(70);
+		walletPaymentMessage.setFromWalletAddress(wallet1);
+		walletPaymentMessage.setToWalletAddress(wallet2);
+		walletPaymentMessage.setTransactionId("djssjsj");
+		walletPaymentMessage.setSignature("djsjajaaj");
+		
+		WalletPaymentTopicProducer.send(walletPaymentMessage.toJSON());
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = updateWalletBalanceTopicConsumer.consume();
+		assertEquals(100, updateWalletBalanceMessage.getBalance());
+		
+	}	
 	
 
 }

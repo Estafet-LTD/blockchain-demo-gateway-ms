@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.API;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.service.EstacoinService;
-import com.estafet.blockchain.demo.messages.lib.transaction.TransactionHashConfirmationMessage;
 
 @RestController
 public class BlockchainGatewayController {
@@ -36,9 +36,10 @@ public class BlockchainGatewayController {
 	}
 
 	@PostMapping("/transfer")
-	public ResponseEntity<TransactionHashConfirmationMessage> transfer(@RequestBody WalletTransfer walletTransfer)
+	public ResponseEntity<TransactionReceipt> transfer(@RequestBody WalletTransfer walletTransfer)
 			throws Exception {
-		return new ResponseEntity<TransactionHashConfirmationMessage>(estaCoinService.transfer(walletTransfer),
+		return new ResponseEntity<TransactionReceipt>(estaCoinService.transfer(walletTransfer),
 				HttpStatus.OK);
 	}
+	
 }

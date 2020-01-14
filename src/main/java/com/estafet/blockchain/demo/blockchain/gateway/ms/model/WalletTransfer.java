@@ -1,9 +1,10 @@
 package com.estafet.blockchain.demo.blockchain.gateway.ms.model;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class WalletTransfer {
-	
-	public final static String BANK_ADDRESS = "0x68a3162c185934A0417f54E8C964E4b6Ee38F77d";
-	public final static String CONTRACT_ADDRESS = "0x69e1bA170c4d853cAA5f4586C136C10D5C95925c";
 	
 	private int amount;
 	
@@ -11,6 +12,22 @@ public class WalletTransfer {
 	
 	private String toAddress;
 
+    public static WalletTransfer fromJSON(String message) {
+        try {
+            return new ObjectMapper().readValue(message, WalletTransfer.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String toJSON() {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+	
 	public int getAmount() {
 		return amount;
 	}

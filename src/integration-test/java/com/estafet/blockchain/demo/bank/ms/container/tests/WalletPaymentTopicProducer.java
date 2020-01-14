@@ -5,7 +5,7 @@ import com.estafet.microservices.scrum.lib.commons.jms.TopicProducer;
 public class WalletPaymentTopicProducer extends TopicProducer {
 
 	public WalletPaymentTopicProducer() {
-		super("new.wallet.topic");
+		super("wallet.payment.topic");
 	}
 	
 	public static void send(String message) {

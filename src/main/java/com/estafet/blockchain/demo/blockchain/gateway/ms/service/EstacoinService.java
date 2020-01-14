@@ -13,12 +13,14 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.gas.DefaultGasProvider;
 
-import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.TransactionHashConfirmationProducer;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.BankPaymentConfirmationProducer;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.UpdateWalletBalanceProducer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.web3j.Estacoin;
 import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessage;
-import com.estafet.blockchain.demo.messages.lib.transaction.TransactionHashConfirmationMessage;
+import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentConfirmationMessage;
+import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.WalletPaymentMessage;
 
 import io.opentracing.Span;
@@ -28,9 +30,6 @@ import io.opentracing.tag.Tags;
 @Service
 public class EstacoinService {
 
-	private static final BigInteger GAS_PRICE = BigInteger.valueOf(1L);
-	private static final BigInteger GAS_LIMIT = BigInteger.valueOf(500_000L);
-
 	@Autowired
 	private Tracer tracer;
 
@@ -38,13 +37,17 @@ public class EstacoinService {
 	Web3j web3j;
 
 	@Autowired
-	TransactionHashConfirmationProducer transactionHashConfirmationProducer;
+	BankPaymentConfirmationProducer bankPaymentConfirmationProducer;
+	
+	@Autowired
+	UpdateWalletBalanceProducer updateWalletBalanceProducer;
 
+	@SuppressWarnings("deprecation")
 	public WalletBalance getBalance(String address) {
 		Span span = tracer.buildSpan("EstacoinService.getBalance").start();
 		try {
 			span.setBaggageItem("address", address);
-			Estacoin contract = Estacoin.load(WalletTransfer.CONTRACT_ADDRESS, web3j, credentials(),
+			Estacoin contract = Estacoin.load(System.getenv("CONTRACT_ADDRESS"), web3j, credentials(),
 					new DefaultGasProvider());
 			return new WalletBalance(address, contract.totalSupply().send().intValue());
 		} catch (Exception e) {
@@ -58,15 +61,15 @@ public class EstacoinService {
 		return Credentials.create(System.getenv("ETHEREUM_CREDENTIALS"));
 	}
 
-	public String transfer(String fromAddress, String toAddress, int amount) {
+	@SuppressWarnings("deprecation")
+	public TransactionReceipt transfer(String fromAddress, String toAddress, int amount) {
 		Span span = tracer.buildSpan("EstacoinService.transfer").start();
 		try {
 			span.setBaggageItem("fromAddress", fromAddress);
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", Integer.toString(amount));
-			Estacoin contract = Estacoin.load(fromAddress, web3j, credentials(), GAS_PRICE, GAS_LIMIT);
-			TransactionReceipt tr = contract.transfer(toAddress, BigInteger.valueOf(amount)).send();
-			return tr.getTransactionHash();
+			Estacoin contract = Estacoin.load(fromAddress, web3j, credentials(), getGasPrice(), getGasLimit());
+			return contract.transfer(toAddress, BigInteger.valueOf(amount)).send();
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -74,18 +77,25 @@ public class EstacoinService {
 		}
 	}
 
-	public TransactionHashConfirmationMessage transfer(WalletTransfer walletTransfer) {
-		String hash = transfer(walletTransfer.getFromAddress(), walletTransfer.getToAddress(),
-				walletTransfer.getAmount());
-		TransactionHashConfirmationMessage message = new TransactionHashConfirmationMessage();
-		message.setTransactionId("");
-		message.setHash(hash);
-		return message;
+	private BigInteger getGasLimit() {
+		return new BigInteger(System.getenv("GAS_LIMIT"));
+	}
+
+	private BigInteger getGasPrice() {
+		return new BigInteger(System.getenv("GAS_PRICE"));
+	}
+
+	public TransactionReceipt transfer(WalletTransfer walletTransfer) {
+		return transfer(walletTransfer.getFromAddress(), walletTransfer.getToAddress(), walletTransfer.getAmount());
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
-		String hash = transfer(WalletTransfer.BANK_ADDRESS, message.getWalletAddress(), message.getCryptoAmount());
-		confirmHash(message.getTransactionId(), hash);
+		transfer(System.getenv("BANK_ADDRESS"), message.getWalletAddress(), message.getCryptoAmount());
+		BankPaymentConfirmationMessage confirmationMessage = new BankPaymentConfirmationMessage();
+		confirmationMessage.setSignature("hjhjhjh");
+		confirmationMessage.setStatus("SUCCESS");
+		confirmationMessage.setTransactionId(message.getTransactionId());
+		bankPaymentConfirmationProducer.sendMessage(confirmationMessage);
 	}
 
 	private RuntimeException handleException(Span span, Exception e) {
@@ -102,21 +112,12 @@ public class EstacoinService {
 	}
 
 	public void handleWalletPaymentMessage(WalletPaymentMessage message) {
-		String hash = transfer(message.getFromWalletAddress(), message.getToWalletAddress(), message.getCryptoAmount());
-		confirmHash(message.getTransactionId(), hash);
+		transfer(message.getFromWalletAddress(), message.getToWalletAddress(), message.getCryptoAmount());
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = new UpdateWalletBalanceMessage();
+		updateWalletBalanceMessage.setBalance(getBalance(message.getFromWalletAddress()).getBalance());
+		updateWalletBalanceMessage.setSignature("fjdjdjdjd");
+		updateWalletBalanceMessage.setWalletAddress(message.getFromWalletAddress());
+		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
 	}
 
-	private void confirmHash(String transactionId, String hash) {
-		TransactionHashConfirmationMessage transactionHashConfirmationMessage = createTransactionHashConfirmationMessage(
-				transactionId, hash);
-		transactionHashConfirmationProducer.sendMessage(transactionHashConfirmationMessage);
-	}
-
-	private TransactionHashConfirmationMessage createTransactionHashConfirmationMessage(String transactionId,
-			String hash) {
-		TransactionHashConfirmationMessage transactionHashConfirmationMessage = new TransactionHashConfirmationMessage();
-		transactionHashConfirmationMessage.setHash(hash);
-		transactionHashConfirmationMessage.setTransactionId(transactionId);
-		return transactionHashConfirmationMessage;
-	}
 }

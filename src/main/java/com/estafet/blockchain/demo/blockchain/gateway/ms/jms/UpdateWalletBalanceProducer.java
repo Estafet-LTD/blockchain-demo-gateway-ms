@@ -10,17 +10,17 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.stereotype.Component;
 
-import com.estafet.blockchain.demo.messages.lib.transaction.TransactionHashConfirmationMessage;
+import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
 
 @Component
-public class TransactionHashConfirmationProducer {
+public class UpdateWalletBalanceProducer {
 
 	@Autowired 
 	private JmsTemplate jmsTemplate;
 	
-	public void sendMessage(TransactionHashConfirmationMessage message) {
+	public void sendMessage(UpdateWalletBalanceMessage message) {
 		jmsTemplate.setPubSubDomain(true);
-		jmsTemplate.convertAndSend("transactionn.hash.confirmation.topic", message.toJSON(), new MessagePostProcessor() {
+		jmsTemplate.convertAndSend("update.wallet.balance.topic", message.toJSON(), new MessagePostProcessor() {
 			@Override
 			public Message postProcessMessage(Message message) throws JMSException {
 				message.setStringProperty("message.event.interaction.reference", UUID.randomUUID().toString());
