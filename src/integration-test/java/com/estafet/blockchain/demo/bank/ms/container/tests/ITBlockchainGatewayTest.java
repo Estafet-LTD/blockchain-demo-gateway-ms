@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 
 import io.restassured.RestAssured;
@@ -27,7 +28,7 @@ public class ITBlockchainGatewayTest {
 	
 	@Before
 	public void before() {
-		RestAssured.baseURI = PropertyUtils.instance().getProperty("BANK_MS_SERVICE_URI");
+		RestAssured.baseURI = PropertyUtils.instance().getProperty("BLOCKCHAIN_GATEWAY_MS_SERVICE_URL");
 	}
 
 	@After
@@ -37,7 +38,7 @@ public class ITBlockchainGatewayTest {
 
 	@Test
 	public void testGetAccount() {
-		get("/account/1000").then()
+		get("/balance/" + WalletTransfer.BANK_ADDRESS).then()
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1000))
 			.body("walletAddress", is("abcd"))

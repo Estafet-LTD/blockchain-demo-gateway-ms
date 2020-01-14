@@ -14,7 +14,8 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.TransactionHashConfirmationProducer;
-import com.estafet.blockchain.demo.blockchain.gateway.ms.model.EstacoinTransfer;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.web3j.Estacoin;
 import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessage;
 import com.estafet.blockchain.demo.messages.lib.transaction.TransactionHashConfirmationMessage;
@@ -39,13 +40,13 @@ public class EstacoinService {
 	@Autowired
 	TransactionHashConfirmationProducer transactionHashConfirmationProducer;
 
-	public Integer getBalance(String address) {
+	public WalletBalance getBalance(String address) {
 		Span span = tracer.buildSpan("EstacoinService.getBalance").start();
 		try {
 			span.setBaggageItem("address", address);
-			Estacoin contract = Estacoin.load(EstacoinTransfer.BANK_ADDRESS, web3j, credentials(),
+			Estacoin contract = Estacoin.load(WalletTransfer.BANK_ADDRESS, web3j, credentials(),
 					new DefaultGasProvider());
-			return contract.balanceOf(address).send().intValue();
+			return new WalletBalance(address, contract.balanceOf(address).send().intValue());
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -73,13 +74,17 @@ public class EstacoinService {
 		}
 	}
 
-	public String transfer(EstacoinTransfer estacoinTransfer) {
-		return transfer(estacoinTransfer.getFromAddress(), estacoinTransfer.getToAddress(),
-				estacoinTransfer.getAmount());
+	public TransactionHashConfirmationMessage transfer(WalletTransfer walletTransfer) {
+		String hash = transfer(walletTransfer.getFromAddress(), walletTransfer.getToAddress(),
+				walletTransfer.getAmount());
+		TransactionHashConfirmationMessage message = new TransactionHashConfirmationMessage();
+		message.setTransactionId("");
+		message.setHash(hash);
+		return message;
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
-		String hash = transfer(EstacoinTransfer.BANK_ADDRESS, message.getWalletAddress(), message.getCryptoAmount());
+		String hash = transfer(WalletTransfer.BANK_ADDRESS, message.getWalletAddress(), message.getCryptoAmount());
 		confirmHash(message.getTransactionId(), hash);
 	}
 
@@ -102,9 +107,16 @@ public class EstacoinService {
 	}
 
 	private void confirmHash(String transactionId, String hash) {
+		TransactionHashConfirmationMessage transactionHashConfirmationMessage = createTransactionHashConfirmationMessage(
+				transactionId, hash);
+		transactionHashConfirmationProducer.sendMessage(transactionHashConfirmationMessage);
+	}
+
+	private TransactionHashConfirmationMessage createTransactionHashConfirmationMessage(String transactionId,
+			String hash) {
 		TransactionHashConfirmationMessage transactionHashConfirmationMessage = new TransactionHashConfirmationMessage();
 		transactionHashConfirmationMessage.setHash(hash);
 		transactionHashConfirmationMessage.setTransactionId(transactionId);
-		transactionHashConfirmationProducer.sendMessage(transactionHashConfirmationMessage);
+		return transactionHashConfirmationMessage;
 	}
 }

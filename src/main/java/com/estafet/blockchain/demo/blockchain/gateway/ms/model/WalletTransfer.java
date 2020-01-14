@@ -1,6 +1,6 @@
 package com.estafet.blockchain.demo.blockchain.gateway.ms.model;
 
-public class EstacoinTransfer {
+public class WalletTransfer {
 	
 	public final static String BANK_ADDRESS = "0x68a3162c185934A0417f54E8C964E4b6Ee38F77d";
 	

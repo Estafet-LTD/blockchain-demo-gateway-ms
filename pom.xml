@@ -47,6 +47,12 @@
 			<artifactId>microservices-scrum-commons-lib</artifactId>
 			<version>1.0.6</version>
 		</dependency>
+		<dependency>
+			<groupId>com.estafet.blockchain.demo</groupId>
+			<artifactId>estafet-blockchain-demo-commons-lib</artifactId>
+			<version>0.0.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
