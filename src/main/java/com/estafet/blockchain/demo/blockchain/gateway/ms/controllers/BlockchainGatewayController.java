@@ -16,8 +16,6 @@ import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.service.EstacoinService;
 
-import java.math.BigInteger;
-
 @RestController
 public class BlockchainGatewayController {
 
@@ -44,7 +42,7 @@ public class BlockchainGatewayController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping("/bankTotalSupply/{address}")
+	@GetMapping("/bank-total-supply/{address}")
 	public ResponseEntity<WalletBalance> getBankTotalSupply(@PathVariable String address)
 			throws Exception {
 		return new ResponseEntity<WalletBalance>(estaCoinService.getBankTotalSupply(address),
