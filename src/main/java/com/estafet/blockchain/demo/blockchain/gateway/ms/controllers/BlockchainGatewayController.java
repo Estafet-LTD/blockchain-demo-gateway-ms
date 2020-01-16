@@ -51,7 +51,7 @@ public class BlockchainGatewayController {
 				HttpStatus.OK);
 	}
 
-	@PostMapping("/transferEstacoinFromBank")
+	@PostMapping("/transfer-from-bank")
 	public ResponseEntity<TransactionReceipt> transferEstacoinFromBank(@RequestBody WalletTransfer walletTransfer )
 			throws Exception {
 		return new ResponseEntity<TransactionReceipt>(estaCoinService.transferEstacoinFromBank(walletTransfer),
