@@ -62,14 +62,14 @@ public class EstacoinService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public TransactionReceipt transfer(String fromAddress, String toAddress, int amount) {
+	public TransactionReceipt transfer(String fromAddress, String toAddress, BigInteger amount) {
 		Span span = tracer.buildSpan("EstacoinService.transfer").start();
 		try {
 			span.setBaggageItem("fromAddress", fromAddress);
 			span.setBaggageItem("toAddress", toAddress);
-			span.setBaggageItem("amount", Integer.toString(amount));
+			span.setBaggageItem("amount", String.valueOf(amount));
 			Estacoin contract = Estacoin.load(fromAddress, web3j, credentials(), getGasPrice(), getGasLimit());
-			return contract.transfer(toAddress, BigInteger.valueOf(amount)).send();
+			return contract.transfer(toAddress, amount).send();
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -90,7 +90,7 @@ public class EstacoinService {
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
-		transfer(System.getenv("BANK_ADDRESS"), message.getWalletAddress(), message.getCryptoAmount());
+		transfer(System.getenv("BANK_ADDRESS"), message.getWalletAddress(), BigInteger.valueOf(message.getCryptoAmount()));
 		BankPaymentConfirmationMessage confirmationMessage = new BankPaymentConfirmationMessage();
 		confirmationMessage.setSignature("hjhjhjh");
 		confirmationMessage.setStatus("SUCCESS");
@@ -112,7 +112,7 @@ public class EstacoinService {
 	}
 
 	public void handleWalletPaymentMessage(WalletPaymentMessage message) {
-		transfer(message.getFromWalletAddress(), message.getToWalletAddress(), message.getCryptoAmount());
+		transfer(message.getFromWalletAddress(), message.getToWalletAddress(), BigInteger.valueOf(message.getCryptoAmount()));
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = new UpdateWalletBalanceMessage();
 		updateWalletBalanceMessage.setBalance(getBalance(message.getFromWalletAddress()).getBalance());
 		updateWalletBalanceMessage.setSignature("fjdjdjdjd");

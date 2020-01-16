@@ -1,12 +1,13 @@
 package com.estafet.blockchain.demo.blockchain.gateway.ms.model;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WalletTransfer {
 	
-	private int amount;
+	private BigInteger amount;
 	
 	private String fromAddress;
 	
@@ -28,11 +29,11 @@ public class WalletTransfer {
         }
     }
 	
-	public int getAmount() {
+	public BigInteger getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(BigInteger amount) {
 		this.amount = amount;
 	}
 

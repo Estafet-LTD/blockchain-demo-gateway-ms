@@ -2,6 +2,7 @@ package com.estafet.blockchain.demo.bank.ms.container.tests;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 
 import static io.restassured.RestAssured.*;
@@ -48,7 +49,7 @@ public class ITBlockchainGatewayTest {
 		String bankAddress = PropertyUtils.instance().getProperty("BANK_ADDRESS");
 		String toAddress = WalletUtils.generateWalletAddress();
 		WalletTransfer transfer = new WalletTransfer();
-		transfer.setAmount(40);
+		transfer.setAmount(new BigInteger("40"));
 		transfer.setFromAddress(bankAddress);
 		transfer.setToAddress(toAddress);
 		
@@ -87,7 +88,7 @@ public class ITBlockchainGatewayTest {
 		String wallet2 = WalletUtils.generateWalletAddress();
 		
 		WalletTransfer initialTransferWallet1 = new WalletTransfer();
-		initialTransferWallet1.setAmount(240);
+		initialTransferWallet1.setAmount(new BigInteger("240"));
 		initialTransferWallet1.setFromAddress(bankAddress);
 		initialTransferWallet1.setToAddress(wallet1);
 		
@@ -96,7 +97,7 @@ public class ITBlockchainGatewayTest {
 			.body("balance", is(240));
 		
 		WalletTransfer initialTransferWallet2 = new WalletTransfer();
-		initialTransferWallet2.setAmount(30);
+		initialTransferWallet2.setAmount(new BigInteger("30"));
 		initialTransferWallet2.setFromAddress(bankAddress);
 		initialTransferWallet2.setToAddress(wallet2);
 		
