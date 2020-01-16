@@ -27,6 +27,8 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.tag.Tags;
 
+import javax.annotation.PostConstruct;
+
 @Service
 public class EstacoinService {
 
@@ -42,14 +44,47 @@ public class EstacoinService {
 	@Autowired
 	UpdateWalletBalanceProducer updateWalletBalanceProducer;
 
+	Estacoin contract = null;
+
+	@PostConstruct
+	public void init() {
+		this.contract = Estacoin.load(System.getenv("CONTRACT_ADDRESS"), web3j, credentials(),
+				new DefaultGasProvider());
+	}
+
 	@SuppressWarnings("deprecation")
 	public WalletBalance getBalance(String address) {
 		Span span = tracer.buildSpan("EstacoinService.getBalance").start();
 		try {
 			span.setBaggageItem("address", address);
-			Estacoin contract = Estacoin.load(System.getenv("CONTRACT_ADDRESS"), web3j, credentials(),
-					new DefaultGasProvider());
+			return new WalletBalance(address, contract.balanceOf(address).send().intValue());
+		} catch (Exception e) {
+			throw handleException(span, e);
+		} finally {
+			span.finish();
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public WalletBalance getBankTotalSupply(String address) {
+		Span span = tracer.buildSpan("EstacoinService.getBankTotalSupply").start();
+		try {
+			span.setBaggageItem("address", address);
 			return new WalletBalance(address, contract.totalSupply().send().intValue());
+		} catch (Exception e) {
+			throw handleException(span, e);
+		} finally {
+			span.finish();
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public TransactionReceipt transferEstacoinFromBank(String toAddress, BigInteger amount) {
+		Span span = tracer.buildSpan("EstacoinService.transferEstacoinFromBank").start();
+		try {
+			span.setBaggageItem("address", toAddress);
+			span.setBaggageItem("amount", String.valueOf(amount));
+			return this.contract.transfer(toAddress, amount).send();
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -68,8 +103,7 @@ public class EstacoinService {
 			span.setBaggageItem("fromAddress", fromAddress);
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
-			Estacoin contract = Estacoin.load(fromAddress, web3j, credentials(), getGasPrice(), getGasLimit());
-			return contract.transfer(toAddress, amount).send();
+			return contract.transferFrom(fromAddress, toAddress, amount).send();
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -87,6 +121,10 @@ public class EstacoinService {
 
 	public TransactionReceipt transfer(WalletTransfer walletTransfer) {
 		return transfer(walletTransfer.getFromAddress(), walletTransfer.getToAddress(), walletTransfer.getAmount());
+	}
+
+	public TransactionReceipt transferEstacoinFromBank(WalletTransfer walletTransfer) {
+		return transferEstacoinFromBank(walletTransfer.getToAddress(), walletTransfer.getAmount());
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
