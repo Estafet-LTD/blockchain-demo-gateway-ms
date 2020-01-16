@@ -76,9 +76,11 @@ public class ITBlockchainGatewayTest {
 		BankPaymentTopicProducer.send(bankPaymentBlockChainMessage.toJSON());
 		BankPaymentConfirmationMessage confirmationMessage = bankPaymentConfirmationTopicConsumer.consume();
 		assertEquals("dhdhdhd", confirmationMessage.getTransactionId());
-		get("/balance/" + walletAddress).then()
-			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("balance", is(547447373));
+
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = updateWalletBalanceTopicConsumer.consume();
+		assertEquals(40, updateWalletBalanceMessage.getBalance());
+		assertEquals(walletAddress, updateWalletBalanceMessage.getWalletAddress());
+		assertEquals("djddjdj", updateWalletBalanceMessage.getSignature());
 	}
 	
 	@Test
