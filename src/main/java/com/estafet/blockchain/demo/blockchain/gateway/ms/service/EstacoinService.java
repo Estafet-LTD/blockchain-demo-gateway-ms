@@ -134,6 +134,9 @@ public class EstacoinService {
 		confirmationMessage.setStatus("SUCCESS");
 		confirmationMessage.setTransactionId(message.getTransactionId());
 		bankPaymentConfirmationProducer.sendMessage(confirmationMessage);
+
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(message.getWalletAddress());
+		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
 	}
 
 	private RuntimeException handleException(Span span, Exception e) {
@@ -151,11 +154,16 @@ public class EstacoinService {
 
 	public void handleWalletPaymentMessage(WalletPaymentMessage message) {
 		transfer(message.getFromWalletAddress(), message.getToWalletAddress(), BigInteger.valueOf(message.getCryptoAmount()));
-		UpdateWalletBalanceMessage updateWalletBalanceMessage = new UpdateWalletBalanceMessage();
-		updateWalletBalanceMessage.setBalance(getBalance(message.getFromWalletAddress()).getBalance());
-		updateWalletBalanceMessage.setSignature("fjdjdjdjd");
-		updateWalletBalanceMessage.setWalletAddress(message.getFromWalletAddress());
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(message.getFromWalletAddress());
 		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
+	}
+
+	private UpdateWalletBalanceMessage getUpdateWalletBalanceMessage(String walletAddress) {
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = new UpdateWalletBalanceMessage();
+		updateWalletBalanceMessage.setBalance(getBalance(walletAddress).getBalance());
+		updateWalletBalanceMessage.setSignature("fjdjdjdjd");
+		updateWalletBalanceMessage.setWalletAddress(walletAddress);
+		return updateWalletBalanceMessage;
 	}
 
 }
