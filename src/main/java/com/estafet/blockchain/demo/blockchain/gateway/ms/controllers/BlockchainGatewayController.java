@@ -41,5 +41,19 @@ public class BlockchainGatewayController {
 		return new ResponseEntity<TransactionReceipt>(estaCoinService.transfer(walletTransfer),
 				HttpStatus.OK);
 	}
+
+	@GetMapping("/bank-total-supply/{address}")
+	public ResponseEntity<WalletBalance> getBankTotalSupply(@PathVariable String address)
+			throws Exception {
+		return new ResponseEntity<WalletBalance>(estaCoinService.getBankTotalSupply(address),
+				HttpStatus.OK);
+	}
+
+	@PostMapping("/transfer-from-bank")
+	public ResponseEntity<TransactionReceipt> transferEstacoinFromBank(@RequestBody WalletTransfer walletTransfer )
+			throws Exception {
+		return new ResponseEntity<TransactionReceipt>(estaCoinService.transferEstacoinFromBank(walletTransfer),
+				HttpStatus.OK);
+	}
 	
 }

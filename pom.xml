@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>com.estafet.blockchain.demo</groupId>
 			<artifactId>estafet-blockchain-demo-commons-lib</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.5</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
