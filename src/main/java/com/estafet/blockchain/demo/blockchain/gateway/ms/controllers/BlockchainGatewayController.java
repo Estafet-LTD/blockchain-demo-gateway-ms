@@ -42,10 +42,10 @@ public class BlockchainGatewayController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping("/bank-total-supply/{address}")
-	public ResponseEntity<WalletBalance> getBankTotalSupply(@PathVariable String address)
+	@GetMapping("/bank-total-supply")
+	public ResponseEntity<WalletBalance> getBankTotalSupply()
 			throws Exception {
-		return new ResponseEntity<WalletBalance>(estaCoinService.getBankTotalSupply(address),
+		return new ResponseEntity<WalletBalance>(estaCoinService.getBankTotalSupply(),
 				HttpStatus.OK);
 	}
 

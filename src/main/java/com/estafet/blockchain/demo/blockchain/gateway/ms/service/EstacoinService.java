@@ -66,11 +66,10 @@ public class EstacoinService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public WalletBalance getBankTotalSupply(String address) {
+	public WalletBalance getBankTotalSupply() {
 		Span span = tracer.buildSpan("EstacoinService.getBankTotalSupply").start();
 		try {
-			span.setBaggageItem("address", address);
-			return new WalletBalance(address, contract.totalSupply().send());
+			return new WalletBalance(null, contract.totalSupply().send());
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
