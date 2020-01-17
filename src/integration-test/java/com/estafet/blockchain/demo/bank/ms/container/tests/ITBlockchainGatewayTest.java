@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
@@ -25,9 +26,11 @@ import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 public class ITBlockchainGatewayTest {
 
 	BankPaymentConfirmationTopicConsumer bankPaymentConfirmationTopicConsumer = new BankPaymentConfirmationTopicConsumer();

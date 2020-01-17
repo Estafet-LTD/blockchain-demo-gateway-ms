@@ -1,12 +1,14 @@
 package com.estafet.blockchain.demo.blockchain.gateway.ms.model;
 
+import java.math.BigInteger;
+
 public class WalletBalance {
 
 	private String address;
 	
-	private int balance;
+	private BigInteger balance;
 
-	public WalletBalance(String address, int balance) {
+	public WalletBalance(String address, BigInteger balance) {
 		this.address = address;
 		this.balance = balance;
 	}
@@ -21,11 +23,11 @@ public class WalletBalance {
 		this.address = address;
 	}
 
-	public int getBalance() {
+	public BigInteger getBalance() {
 		return balance;
 	}
 
-	public void setBalance(int balance) {
+	public void setBalance(BigInteger balance) {
 		this.balance = balance;
 	}
 	

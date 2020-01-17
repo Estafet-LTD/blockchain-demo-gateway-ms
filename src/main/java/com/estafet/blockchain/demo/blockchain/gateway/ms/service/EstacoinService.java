@@ -57,7 +57,7 @@ public class EstacoinService {
 		Span span = tracer.buildSpan("EstacoinService.getBalance").start();
 		try {
 			span.setBaggageItem("address", address);
-			return new WalletBalance(address, contract.balanceOf(address).send().intValue());
+			return new WalletBalance(address, contract.balanceOf(address).send());
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -70,7 +70,7 @@ public class EstacoinService {
 		Span span = tracer.buildSpan("EstacoinService.getBankTotalSupply").start();
 		try {
 			span.setBaggageItem("address", address);
-			return new WalletBalance(address, contract.totalSupply().send().intValue());
+			return new WalletBalance(address, contract.totalSupply().send());
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -160,7 +160,7 @@ public class EstacoinService {
 
 	private UpdateWalletBalanceMessage getUpdateWalletBalanceMessage(String walletAddress) {
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = new UpdateWalletBalanceMessage();
-		updateWalletBalanceMessage.setBalance(getBalance(walletAddress).getBalance());
+		updateWalletBalanceMessage.setBalance(getBalance(walletAddress).getBalance().intValue());
 		updateWalletBalanceMessage.setSignature("fjdjdjdjd");
 		updateWalletBalanceMessage.setWalletAddress(walletAddress);
 		return updateWalletBalanceMessage;
