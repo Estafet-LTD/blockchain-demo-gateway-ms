@@ -73,6 +73,7 @@ public class ITBlockchainGatewayTest {
 	}
 
 	@Test
+	@Ignore
 	public void testBankToWalletTransfer() {
 		String toAddress = "0x1b996c229735359188ad29c3988f0558320f8764";
 		WalletTransfer transfer = new WalletTransfer();
