@@ -60,7 +60,7 @@ public class ITBlockchainGatewayTest {
 			.then()
 				.statusCode(HttpURLConnection.HTTP_OK);
 		
-		get("/balance/" + bankAddress).then()
+		get("/balance/" + toAddress).then()
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("balance", is(40));		
 	}
