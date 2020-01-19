@@ -37,7 +37,7 @@ public class Application extends SpringBootServletInitializer {
 
 	@Bean
 	public io.opentracing.Tracer jaegerTracer() {
-		return new com.uber.jaeger.Configuration("validator-gateway-ms",
+		return new com.uber.jaeger.Configuration("blockchain-gateway-ms",
 				com.uber.jaeger.Configuration.SamplerConfiguration.fromEnv(),
 				com.uber.jaeger.Configuration.ReporterConfiguration.fromEnv()).getTracer();
 	}
