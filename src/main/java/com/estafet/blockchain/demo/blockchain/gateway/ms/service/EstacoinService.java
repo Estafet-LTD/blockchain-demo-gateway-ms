@@ -129,8 +129,10 @@ public class EstacoinService {
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
-		transfer(System.getenv("BANK_ADDRESS"), message.getWalletAddress(),
-				BigInteger.valueOf(message.getCryptoAmount()));
+
+		transferEstacoinFromBank(message.getWalletAddress(),
+				new BigInteger(Integer.toString(message.getCryptoAmount())));
+
 		BankPaymentConfirmationMessage confirmationMessage = new BankPaymentConfirmationMessage();
 		confirmationMessage.setSignature("hjhjhjh");
 		confirmationMessage.setStatus("SUCCESS");

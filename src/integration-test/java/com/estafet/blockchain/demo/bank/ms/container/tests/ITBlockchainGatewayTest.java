@@ -47,27 +47,6 @@ public class ITBlockchainGatewayTest {
 	}
 
 	@Test
-	public void testRestTransfer() {
-		String bankAddress = PropertyUtils.instance().getProperty("BANK_ADDRESS");
-		String toAddress = WalletUtils.generateWalletAddress();
-		WalletTransfer transfer = new WalletTransfer();
-		transfer.setAmount(new BigInteger("40"));
-		transfer.setFromAddress(bankAddress);
-		transfer.setToAddress(toAddress);
-		
-		given().contentType(ContentType.JSON)
-			.body(transfer.toJSON())
-			.when()
-				.post("/transfer")
-			.then()
-				.statusCode(HttpURLConnection.HTTP_OK);
-		
-		get("/balance/" + toAddress).then()
-			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("balance", is(40));		
-	}
-
-	@Test
 	public void testBankToWalletTransfer() {
 		String toAddress = WalletUtils.generateWalletAddress();
 		WalletTransfer transfer = new WalletTransfer();
