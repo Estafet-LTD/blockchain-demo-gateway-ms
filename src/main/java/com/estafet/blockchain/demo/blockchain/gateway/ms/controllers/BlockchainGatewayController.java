@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.API;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletAddress;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.service.EstacoinService;
@@ -54,6 +55,11 @@ public class BlockchainGatewayController {
 			throws Exception {
 		return new ResponseEntity<TransactionReceipt>(estaCoinService.transferEstacoinFromBank(walletTransfer),
 				HttpStatus.OK);
+	}
+	
+	@PostMapping("/generate-wallet-account")
+	public ResponseEntity<WalletAddress> createWalletAccount() {
+		return new ResponseEntity<WalletAddress>(estaCoinService.createWalletAccount(), HttpStatus.OK);
 	}
 	
 }

@@ -3,18 +3,30 @@ package com.estafet.blockchain.demo.blockchain.gateway.ms.service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.Wallet;
+import org.web3j.crypto.WalletFile;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.BankPaymentConfirmationProducer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.UpdateWalletBalanceProducer;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletAddress;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.web3j.Estacoin;
@@ -27,8 +39,6 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.tag.Tags;
 
-import javax.annotation.PostConstruct;
-
 @Service
 public class EstacoinService {
 
@@ -40,7 +50,7 @@ public class EstacoinService {
 
 	@Autowired
 	BankPaymentConfirmationProducer bankPaymentConfirmationProducer;
-	
+
 	@Autowired
 	UpdateWalletBalanceProducer updateWalletBalanceProducer;
 
@@ -110,14 +120,6 @@ public class EstacoinService {
 		}
 	}
 
-	private BigInteger getGasLimit() {
-		return new BigInteger(System.getenv("GAS_LIMIT"));
-	}
-
-	private BigInteger getGasPrice() {
-		return new BigInteger(System.getenv("GAS_PRICE"));
-	}
-
 	public TransactionReceipt transfer(WalletTransfer walletTransfer) {
 		return transfer(walletTransfer.getFromAddress(), walletTransfer.getToAddress(), walletTransfer.getAmount());
 	}
@@ -127,14 +129,16 @@ public class EstacoinService {
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
-		transfer(System.getenv("BANK_ADDRESS"), message.getWalletAddress(), BigInteger.valueOf(message.getCryptoAmount()));
+		transfer(System.getenv("BANK_ADDRESS"), message.getWalletAddress(),
+				BigInteger.valueOf(message.getCryptoAmount()));
 		BankPaymentConfirmationMessage confirmationMessage = new BankPaymentConfirmationMessage();
 		confirmationMessage.setSignature("hjhjhjh");
 		confirmationMessage.setStatus("SUCCESS");
 		confirmationMessage.setTransactionId(message.getTransactionId());
 		bankPaymentConfirmationProducer.sendMessage(confirmationMessage);
 
-		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(message.getWalletAddress());
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(
+				message.getWalletAddress());
 		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
 	}
 
@@ -152,8 +156,10 @@ public class EstacoinService {
 	}
 
 	public void handleWalletPaymentMessage(WalletPaymentMessage message) {
-		transfer(message.getFromWalletAddress(), message.getToWalletAddress(), BigInteger.valueOf(message.getCryptoAmount()));
-		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(message.getFromWalletAddress());
+		transfer(message.getFromWalletAddress(), message.getToWalletAddress(),
+				BigInteger.valueOf(message.getCryptoAmount()));
+		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(
+				message.getFromWalletAddress());
 		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
 	}
 
@@ -163,6 +169,20 @@ public class EstacoinService {
 		updateWalletBalanceMessage.setSignature("fjdjdjdjd");
 		updateWalletBalanceMessage.setWalletAddress(walletAddress);
 		return updateWalletBalanceMessage;
+	}
+
+	public WalletAddress createWalletAccount() {
+		try {
+			String seed = UUID.randomUUID().toString();
+			ECKeyPair ecKeyPair = Keys.createEcKeyPair();
+			WalletFile aWallet = Wallet.createLight(seed, ecKeyPair);
+			String sPrivatekeyInHex = ecKeyPair.getPrivateKey().toString(16);
+			Credentials.create(sPrivatekeyInHex);
+			return new WalletAddress(aWallet.getAddress());
+		} catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException
+				| CipherException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

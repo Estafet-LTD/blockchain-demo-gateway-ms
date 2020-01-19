@@ -82,10 +82,6 @@ objects:
                 value: 'http://go-ethereum.${NAMESPACE}.svc:8545'
               - name: ETHEREUM_CREDENTIALS
                 value: '297FA7A28DE8E6AC8FD32779BB8E5FB2AC2B7A4269A65AA2CE771995A1ED4389'
-              - name: GAS_PRICE
-                value: '1'
-              - name: GAS_LIMIT
-                value: '500000'
               - name: BANK_ADDRESS
                 value: '0x63c14caced9e351ed8463e21d9bdee673b26fbbf'
               - name: CONTRACT_ADDRESS

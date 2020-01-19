@@ -10,7 +10,6 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,7 +21,6 @@ import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessag
 import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentConfirmationMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.WalletPaymentMessage;
-import com.estafet.demo.commons.lib.wallet.WalletUtils;
 import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 
 import io.restassured.RestAssured;
@@ -48,9 +46,6 @@ public class ITBlockchainGatewayTest {
 		updateWalletBalanceTopicConsumer.closeConnection();
 	}
 
-
-	// transfer is not working !!!! Shukri will have a look
-	@Ignore
 	@Test
 	public void testRestTransfer() {
 		String bankAddress = PropertyUtils.instance().getProperty("BANK_ADDRESS");
@@ -73,41 +68,25 @@ public class ITBlockchainGatewayTest {
 	}
 
 	@Test
-	@Ignore
 	public void testBankToWalletTransfer() {
-		String toAddress = "0x1b996c229735359188ad29c3988f0558320f8764";
+		String toAddress = WalletUtils.generateWalletAddress();
 		WalletTransfer transfer = new WalletTransfer();
 		transfer.setAmount(new BigInteger("40"));
 		transfer.setToAddress(toAddress);
 
 		given().contentType(ContentType.JSON)
-				.body(transfer.toJSON())
-				.when()
+			.body(transfer.toJSON())
+			.when()
 				.post("/transfer-from-bank")
-				.then()
+			.then()
 				.statusCode(HttpURLConnection.HTTP_OK);
 
 		get("/balance/" + toAddress).then()
 				.statusCode(HttpURLConnection.HTTP_OK)
 				.body("balance", is(40));
 
-		WalletTransfer transfer1 = new WalletTransfer();
-		transfer1.setAmount(new BigInteger("60"));
-		transfer1.setToAddress(toAddress);
-
-		given().contentType(ContentType.JSON)
-				.body(transfer1.toJSON())
-				.when()
-				.post("/transfer-from-bank")
-				.then()
-				.statusCode(HttpURLConnection.HTTP_OK);
-
-		get("/balance/" + toAddress).then()
-				.statusCode(HttpURLConnection.HTTP_OK)
-				.body("balance", is(100));
 	}
 
-	@Ignore
 	@Test
 	public void testBank2Wallet() {
 		String walletAddress = WalletUtils.generateWalletAddress();
@@ -123,10 +102,8 @@ public class ITBlockchainGatewayTest {
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = updateWalletBalanceTopicConsumer.consume();
 		assertEquals(40, updateWalletBalanceMessage.getBalance());
 		assertEquals(walletAddress, updateWalletBalanceMessage.getWalletAddress());
-		assertEquals("djddjdj", updateWalletBalanceMessage.getSignature());
 	}
 
-	@Ignore
 	@Test
 	public void testWallet2Wallet() {
 		String bankAddress = PropertyUtils.instance().getProperty("BANK_ADDRESS");
