@@ -33,7 +33,7 @@ import org.web3j.tx.gas.ContractGasProvider;
  * <p>Generated with web3j version 4.2.0.
  */
 public class Owned extends Contract {
-    private static final String BINARY = "608060405234801561001057600080fd5b5060008054600160a060020a031916331790556101fc806100326000396000f3006080604052600436106100615763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166379ba509781146100665780638da5cb5b1461007d578063d4ee1d90146100ae578063f2fde38b146100c3575b600080fd5b34801561007257600080fd5b5061007b6100e4565b005b34801561008957600080fd5b5061009261016c565b60408051600160a060020a039092168252519081900360200190f35b3480156100ba57600080fd5b5061009261017b565b3480156100cf57600080fd5b5061007b600160a060020a036004351661018a565b600154600160a060020a031633146100fb57600080fd5b60015460008054604051600160a060020a0393841693909116917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600180546000805473ffffffffffffffffffffffffffffffffffffffff19908116600160a060020a03841617909155169055565b600054600160a060020a031681565b600154600160a060020a031681565b600054600160a060020a031633146101a157600080fd5b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03929092169190911790555600a165627a7a72305820b8328c871e2b881e4ee2c49facca39b77dcfa7471e73b11ea9667caadaa19eab0029";
+    private static final String BINARY = "608060405234801561001057600080fd5b5060008054600160a060020a031916331790556101fc806100326000396000f3006080604052600436106100615763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166379ba509781146100665780638da5cb5b1461007d578063d4ee1d90146100ae578063f2fde38b146100c3575b600080fd5b34801561007257600080fd5b5061007b6100e4565b005b34801561008957600080fd5b5061009261016c565b60408051600160a060020a039092168252519081900360200190f35b3480156100ba57600080fd5b5061009261017b565b3480156100cf57600080fd5b5061007b600160a060020a036004351661018a565b600154600160a060020a031633146100fb57600080fd5b60015460008054604051600160a060020a0393841693909116917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600180546000805473ffffffffffffffffffffffffffffffffffffffff19908116600160a060020a03841617909155169055565b600054600160a060020a031681565b600154600160a060020a031681565b600054600160a060020a031633146101a157600080fd5b6001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03929092169190911790555600a165627a7a72305820531fceb00d40a0d5d317e1443f3ef1e3f10d340c0c66574cd445289bbe7de7960029";
 
     public static final String FUNC_ACCEPTOWNERSHIP = "acceptOwnership";
 
@@ -90,15 +90,15 @@ public class Owned extends Contract {
     public RemoteCall<TransactionReceipt> transferOwnership(String _newOwner) {
         final Function function = new Function(
                 FUNC_TRANSFEROWNERSHIP, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(_newOwner)), 
+                Arrays.<Type>asList(new Address(_newOwner)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
     public List<OwnershipTransferredEventResponse> getOwnershipTransferredEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
         ArrayList<OwnershipTransferredEventResponse> responses = new ArrayList<OwnershipTransferredEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse._from = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -112,7 +112,7 @@ public class Owned extends Contract {
         return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, OwnershipTransferredEventResponse>() {
             @Override
             public OwnershipTransferredEventResponse apply(Log log) {
-                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, log);
+                EventValuesWithLog eventValues = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, log);
                 OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
                 typedResponse.log = log;
                 typedResponse._from = (String) eventValues.getIndexedValues().get(0).getValue();

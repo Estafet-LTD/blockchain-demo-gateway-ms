@@ -23,7 +23,7 @@ import org.web3j.tx.gas.ContractGasProvider;
  * <p>Generated with web3j version 4.2.0.
  */
 public class SafeMath extends Contract {
-    private static final String BINARY = "608060405234801561001057600080fd5b50610181806100206000396000f3006080604052600436106100615763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663a293d1e88114610066578063b5931f7c14610093578063d05c78da146100ae578063e6cb9013146100c9575b600080fd5b34801561007257600080fd5b506100816004356024356100e4565b60408051918252519081900360200190f35b34801561009f57600080fd5b506100816004356024356100f9565b3480156100ba57600080fd5b5061008160043560243561011a565b3480156100d557600080fd5b50610081600435602435610145565b6000828211156100f357600080fd5b50900390565b600080821161010757600080fd5b818381151561011257fe5b049392505050565b818102821580610134575081838281151561013157fe5b04145b151561013f57600080fd5b92915050565b8181018281101561013f57600080fd00a165627a7a723058209de1d13eea192aeb141df9a439df49ade87bb0d17c5067bdfdceb25421e2286b0029";
+    private static final String BINARY = "608060405234801561001057600080fd5b50610181806100206000396000f3006080604052600436106100615763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663a293d1e88114610066578063b5931f7c14610093578063d05c78da146100ae578063e6cb9013146100c9575b600080fd5b34801561007257600080fd5b506100816004356024356100e4565b60408051918252519081900360200190f35b34801561009f57600080fd5b506100816004356024356100f9565b3480156100ba57600080fd5b5061008160043560243561011a565b3480156100d557600080fd5b50610081600435602435610145565b6000828211156100f357600080fd5b50900390565b600080821161010757600080fd5b818381151561011257fe5b049392505050565b818102821580610134575081838281151561013157fe5b04145b151561013f57600080fd5b92915050565b8181018281101561013f57600080fd00a165627a7a72305820d35621a901403e850668310e98a75793723988b66b5b718b33a7c559a7485dcf0029";
 
     public static final String FUNC_SAFESUB = "safeSub";
 
@@ -53,32 +53,32 @@ public class SafeMath extends Contract {
 
     public RemoteCall<BigInteger> safeSub(BigInteger a, BigInteger b) {
         final Function function = new Function(FUNC_SAFESUB, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(a), 
-                new org.web3j.abi.datatypes.generated.Uint256(b)), 
+                Arrays.<Type>asList(new Uint256(a),
+                new Uint256(b)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> safeDiv(BigInteger a, BigInteger b) {
         final Function function = new Function(FUNC_SAFEDIV, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(a), 
-                new org.web3j.abi.datatypes.generated.Uint256(b)), 
+                Arrays.<Type>asList(new Uint256(a),
+                new Uint256(b)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> safeMul(BigInteger a, BigInteger b) {
         final Function function = new Function(FUNC_SAFEMUL, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(a), 
-                new org.web3j.abi.datatypes.generated.Uint256(b)), 
+                Arrays.<Type>asList(new Uint256(a),
+                new Uint256(b)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteCall<BigInteger> safeAdd(BigInteger a, BigInteger b) {
         final Function function = new Function(FUNC_SAFEADD, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(a), 
-                new org.web3j.abi.datatypes.generated.Uint256(b)), 
+                Arrays.<Type>asList(new Uint256(a),
+                new Uint256(b)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
