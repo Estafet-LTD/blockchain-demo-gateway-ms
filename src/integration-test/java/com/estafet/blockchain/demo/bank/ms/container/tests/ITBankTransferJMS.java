@@ -63,7 +63,7 @@ public class ITBankTransferJMS {
 	}
 
 	@Test
-	public void testBank2Wallet() throws InterruptedException {
+	public void testBank2Wallet() {
 		String walletAddress = WalletTestUtils.generateWalletAddress();
 		BankPaymentBlockChainMessage bankPaymentBlockChainMessage = new BankPaymentBlockChainMessage();
 		bankPaymentBlockChainMessage.setCryptoAmount(40);
@@ -71,7 +71,6 @@ public class ITBankTransferJMS {
 		bankPaymentBlockChainMessage.setWalletAddress(walletAddress);
 		bankPaymentBlockChainMessage.setSignature("djddjdj");
 		BankPaymentTopicProducer.send(bankPaymentBlockChainMessage.toJSON());
-		Thread.sleep(4000);
 		BankPaymentConfirmationMessage confirmationMessage = topic.consume();
 		assertEquals("dhdhdhd", confirmationMessage.getTransactionId());
 	}
