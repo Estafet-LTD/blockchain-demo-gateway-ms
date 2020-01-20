@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.CipherException;
@@ -42,6 +44,8 @@ import io.opentracing.tag.Tags;
 @Service
 public class EstacoinService {
 
+	Logger logger = LoggerFactory.getLogger(EstacoinService.class);
+
 	@Autowired
 	private Tracer tracer;
 
@@ -64,9 +68,11 @@ public class EstacoinService {
 
 	@SuppressWarnings("deprecation")
 	public WalletBalance getBalance(String address) {
+		logger.info("start getBalance ");
 		Span span = tracer.buildSpan("EstacoinService.getBalance").start();
 		try {
 			span.setBaggageItem("address", address);
+			logger.info("getBalance address =" + address);
 			return new WalletBalance(address, contract.balanceOf(address).send());
 		} catch (Exception e) {
 			throw handleException(span, e);
@@ -77,6 +83,7 @@ public class EstacoinService {
 
 	@SuppressWarnings("deprecation")
 	public WalletBalance getBankTotalSupply() {
+		logger.info("start getBankTotalSupply ");
 		Span span = tracer.buildSpan("EstacoinService.getBankTotalSupply").start();
 		try {
 			return new WalletBalance(null, contract.totalSupply().send());
@@ -89,10 +96,12 @@ public class EstacoinService {
 
 	@SuppressWarnings("deprecation")
 	public TransactionReceipt transferEstacoinFromBank(String toAddress, BigInteger amount) {
+		logger.info("start transferEstacoinFromBank ");
 		Span span = tracer.buildSpan("EstacoinService.transferEstacoinFromBank").start();
 		try {
 			span.setBaggageItem("address", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
+			logger.info("transferEstacoinFromBank toAddress =" + toAddress+" amount= "+amount);
 			return this.contract.transfer(toAddress, amount).send();
 		} catch (Exception e) {
 			throw handleException(span, e);
@@ -107,11 +116,13 @@ public class EstacoinService {
 
 	@SuppressWarnings("deprecation")
 	public TransactionReceipt transfer(String fromAddress, String toAddress, BigInteger amount) {
+		logger.info("start transfer ");
 		Span span = tracer.buildSpan("EstacoinService.transfer").start();
 		try {
 			span.setBaggageItem("fromAddress", fromAddress);
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
+			logger.info("transfer toAddress =" + toAddress+" amount= "+amount+"fromAddress="+fromAddress);
 			return contract.transferFrom(fromAddress, toAddress, amount).send();
 		} catch (Exception e) {
 			throw handleException(span, e);
@@ -129,7 +140,7 @@ public class EstacoinService {
 	}
 
 	public void handleBankPaymentMessage(BankPaymentBlockChainMessage message) {
-
+		logger.info("start handleBankPaymentMessage ");
 		transferEstacoinFromBank(message.getWalletAddress(),
 				new BigInteger(Integer.toString(message.getCryptoAmount())));
 
@@ -137,11 +148,16 @@ public class EstacoinService {
 		confirmationMessage.setSignature("hjhjhjh");
 		confirmationMessage.setStatus("SUCCESS");
 		confirmationMessage.setTransactionId(message.getTransactionId());
+
 		bankPaymentConfirmationProducer.sendMessage(confirmationMessage);
+
+		logger.info("BankPaymentConfirmationMessage from BankPaymentConsumer = "+confirmationMessage.toJSON());
 
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(
 				message.getWalletAddress());
 		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
+
+		logger.info("UpdateWalletBalanceMessage = "+updateWalletBalanceMessage.toJSON());
 	}
 
 	private RuntimeException handleException(Span span, Exception e) {
@@ -158,6 +174,7 @@ public class EstacoinService {
 	}
 
 	public void handleWalletPaymentMessage(WalletPaymentMessage message) {
+		logger.info("start handleWalletPaymentMessage ");
 		transfer(message.getFromWalletAddress(), message.getToWalletAddress(),
 				BigInteger.valueOf(message.getCryptoAmount()));
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(
