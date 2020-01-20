@@ -122,7 +122,7 @@ public class EstacoinService {
 			span.setBaggageItem("fromAddress", fromAddress);
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
-			logger.info("transfer toAddress =" + toAddress+" amount= "+amount+"fromAddress="+fromAddress);
+			logger.info("transfer toAddress =" + toAddress+" amount= "+amount+" fromAddress="+fromAddress);
 			return contract.transferFrom(fromAddress, toAddress, amount).send();
 		} catch (Exception e) {
 			throw handleException(span, e);

@@ -42,25 +42,6 @@ public class ITBankTransferJMS {
 		topic.closeConnection();
 	}
 
-	@Test
-	public void testBankToWalletTransfer() {
-		String toAddress = WalletTestUtils.generateWalletAddress();
-		WalletTransfer transfer = new WalletTransfer();
-		transfer.setAmount(new BigInteger("40"));
-		transfer.setToAddress(toAddress);
-
-		given().contentType(ContentType.JSON)
-			.body(transfer.toJSON())
-			.when()
-				.post("/transfer-from-bank")
-			.then()
-				.statusCode(HttpURLConnection.HTTP_OK);
-
-		get("/balance/" + toAddress).then()
-				.statusCode(HttpURLConnection.HTTP_OK)
-				.body("balance", is(40));
-
-	}
 
 	@Test
 	public void testBank2Wallet() throws InterruptedException {
