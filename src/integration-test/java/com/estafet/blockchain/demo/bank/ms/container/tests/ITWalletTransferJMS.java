@@ -42,7 +42,7 @@ public class ITWalletTransferJMS {
 	}
 
 	@Test
-	public void testWallet2Wallet() {
+	public void testWallet2Wallet() throws InterruptedException {
 		String wallet1 = WalletTestUtils.generateWalletAddress();
 		String wallet2 = WalletTestUtils.generateWalletAddress();
 		
@@ -57,6 +57,7 @@ public class ITWalletTransferJMS {
 		walletPaymentMessage.setSignature("djsjajaaj");
 		
 		WalletPaymentTopicProducer.send(walletPaymentMessage.toJSON());
+		Thread.sleep(20000);
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = topic.consume();
 		assertEquals(100, updateWalletBalanceMessage.getBalance());
 		
