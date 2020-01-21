@@ -90,7 +90,7 @@ contract Estacoin is ERC20Interface, Owned, SafeMath {
         name = "Estacoin";
         decimals = 18;
         _totalSupply = 100000000000000000000000000;
-        owner = address(0x63c14caced9e351ed8463e21d9bdee673b26fbbf);
+        owner = address(0x63c14CaceD9e351ED8463E21D9bdee673b26fbbF);
         
         balances[owner] = _totalSupply;
         emit Transfer(address(0), owner, _totalSupply);
