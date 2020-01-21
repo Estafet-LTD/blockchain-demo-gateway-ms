@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.UpdateWalletReceiverBalanceProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ public class EstacoinService {
 
 	@Autowired
 	UpdateWalletBalanceProducer updateWalletBalanceProducer;
+
+	@Autowired
+	UpdateWalletReceiverBalanceProducer updateWalletReceiverBalanceProducer;
 
 	Estacoin contract = null;
 
@@ -153,11 +157,11 @@ public class EstacoinService {
 
 		logger.info("BankPaymentConfirmationMessage from BankPaymentConsumer = "+confirmationMessage.toJSON());
 
-		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(
+		UpdateWalletBalanceMessage updateWalletReceiverBalanceMessage = getUpdateWalletBalanceMessage(
 				message.getWalletAddress());
-		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
+		updateWalletReceiverBalanceProducer.sendMessage(updateWalletReceiverBalanceMessage);
 
-		logger.info("UpdateWalletBalanceMessage = "+updateWalletBalanceMessage.toJSON());
+		logger.info("UpdateWalletBalanceMessage receiver = "+updateWalletReceiverBalanceMessage.toJSON());
 	}
 
 	private RuntimeException handleException(Span span, Exception e) {
@@ -177,9 +181,14 @@ public class EstacoinService {
 		logger.info("start handleWalletPaymentMessage ");
 		transfer(message.getFromWalletAddress(), message.getToWalletAddress(),
 				BigInteger.valueOf(message.getCryptoAmount()));
-		UpdateWalletBalanceMessage updateWalletBalanceMessage = getUpdateWalletBalanceMessage(
+
+		UpdateWalletBalanceMessage updateWalletSenderBalanceMessage = getUpdateWalletBalanceMessage(
 				message.getFromWalletAddress());
-		updateWalletBalanceProducer.sendMessage(updateWalletBalanceMessage);
+		updateWalletBalanceProducer.sendMessage(updateWalletSenderBalanceMessage);
+
+		UpdateWalletBalanceMessage updateWalletReceiverBalanceMessage = getUpdateWalletBalanceMessage(
+				message.getToWalletAddress());
+		updateWalletReceiverBalanceProducer.sendMessage(updateWalletReceiverBalanceMessage);
 	}
 
 	private UpdateWalletBalanceMessage getUpdateWalletBalanceMessage(String walletAddress) {

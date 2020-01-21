@@ -29,7 +29,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 public class ITWalletTransferJMS {
 
-	UpdateWalletBalanceTopicConsumer topic = new UpdateWalletBalanceTopicConsumer();	
+	UpdateWalletBalanceTopicConsumer topic = new UpdateWalletBalanceTopicConsumer();
+	UpdateWalletReceiverBalanceTopicConsumer balanceTopic = new UpdateWalletReceiverBalanceTopicConsumer();
 	
 	@Before
 	public void before() {
@@ -39,6 +40,7 @@ public class ITWalletTransferJMS {
 	@After
 	public void after() {
 		topic.closeConnection();
+		balanceTopic.closeConnection();
 	}
 
 	@Test
@@ -58,8 +60,13 @@ public class ITWalletTransferJMS {
 		
 		WalletPaymentTopicProducer.send(walletPaymentMessage.toJSON());
 		Thread.sleep(20000);
-		UpdateWalletBalanceMessage updateWalletBalanceMessage = topic.consume();
-		assertEquals(170, updateWalletBalanceMessage.getBalance());
+		UpdateWalletBalanceMessage updateWalletSenderBalanceMessage = topic.consume();
+		assertEquals(wallet1, updateWalletSenderBalanceMessage.getWalletAddress());
+		assertEquals(170, updateWalletSenderBalanceMessage.getBalance());
+
+		UpdateWalletBalanceMessage updateWalletReceiverBalanceMessage = balanceTopic.consume();
+		assertEquals(wallet2, updateWalletSenderBalanceMessage.getWalletAddress());
+		assertEquals(100, updateWalletReceiverBalanceMessage.getBalance());
 
 	}	
 	

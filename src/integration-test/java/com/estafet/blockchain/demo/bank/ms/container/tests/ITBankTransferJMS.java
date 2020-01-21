@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 public class ITBankTransferJMS {
 
 	BankPaymentConfirmationTopicConsumer topic = new BankPaymentConfirmationTopicConsumer();
+	UpdateWalletReceiverBalanceTopicConsumer balanceTopic = new UpdateWalletReceiverBalanceTopicConsumer();
 	
 	@Before
 	public void before() {
@@ -40,6 +42,7 @@ public class ITBankTransferJMS {
 	@After
 	public void after() {
 		topic.closeConnection();
+		balanceTopic.closeConnection();
 	}
 
 
@@ -55,6 +58,11 @@ public class ITBankTransferJMS {
 		Thread.sleep(20000);
 		BankPaymentConfirmationMessage confirmationMessage = topic.consume();
 		assertEquals("dhdhdhd", confirmationMessage.getTransactionId());
+
+		UpdateWalletBalanceMessage updateWalletReceiverBalanceMessage = balanceTopic.consume();
+		assertEquals(walletAddress, updateWalletReceiverBalanceMessage.getWalletAddress());
+		assertEquals(40, updateWalletReceiverBalanceMessage.getBalance());
+
 	}
 	
 
