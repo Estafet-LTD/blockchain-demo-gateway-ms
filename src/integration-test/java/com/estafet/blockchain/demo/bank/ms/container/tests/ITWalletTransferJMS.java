@@ -65,7 +65,7 @@ public class ITWalletTransferJMS {
 		assertEquals(170, updateWalletSenderBalanceMessage.getBalance());
 
 		UpdateWalletBalanceMessage updateWalletReceiverBalanceMessage = balanceTopic.consume();
-		assertEquals(wallet2, updateWalletSenderBalanceMessage.getWalletAddress());
+		assertEquals(wallet2, updateWalletReceiverBalanceMessage.getWalletAddress());
 		assertEquals(100, updateWalletReceiverBalanceMessage.getBalance());
 
 	}	
