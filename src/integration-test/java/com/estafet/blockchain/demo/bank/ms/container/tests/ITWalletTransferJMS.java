@@ -59,8 +59,8 @@ public class ITWalletTransferJMS {
 		WalletPaymentTopicProducer.send(walletPaymentMessage.toJSON());
 		Thread.sleep(20000);
 		UpdateWalletBalanceMessage updateWalletBalanceMessage = topic.consume();
-		assertEquals(100, updateWalletBalanceMessage.getBalance());
-		
+		assertEquals(170, updateWalletBalanceMessage.getBalance());
+
 	}	
 	
 
