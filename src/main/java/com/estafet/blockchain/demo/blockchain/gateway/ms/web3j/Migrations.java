@@ -57,7 +57,7 @@ public class Migrations extends Contract {
     public RemoteCall<TransactionReceipt> upgrade(String new_address) {
         final Function function = new Function(
                 FUNC_UPGRADE, 
-                Arrays.<Type>asList(new Address(new_address)),
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(new_address)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -79,7 +79,7 @@ public class Migrations extends Contract {
     public RemoteCall<TransactionReceipt> setCompleted(BigInteger completed) {
         final Function function = new Function(
                 FUNC_SETCOMPLETED, 
-                Arrays.<Type>asList(new Uint256(completed)),
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(completed)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
