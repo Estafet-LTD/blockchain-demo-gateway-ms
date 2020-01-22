@@ -106,7 +106,10 @@ public class EstacoinService {
 			span.setBaggageItem("address", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
 			logger.info("transferEstacoinFromBank toAddress =" + toAddress+" amount= "+amount);
-			return this.contract.transfer(toAddress, amount).send();
+			TransactionReceipt receipt = contract.transfer(toAddress, amount).send();
+			span.setBaggageItem("transactionHash", receipt.getTransactionHash());
+			span.setBaggageItem("blockHash", receipt.getBlockHash());
+			return receipt;
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
@@ -127,7 +130,10 @@ public class EstacoinService {
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
 			logger.info("transfer toAddress =" + toAddress+" amount= "+amount+" fromAddress="+fromAddress);
-			return contract.transferWalletToWallet(fromAddress, toAddress, amount).send();
+			TransactionReceipt receipt = contract.transferFrom(fromAddress, toAddress, amount).send();
+			span.setBaggageItem("transactionHash", receipt.getTransactionHash());
+			span.setBaggageItem("blockHash", receipt.getBlockHash());
+			return receipt;
 		} catch (Exception e) {
 			throw handleException(span, e);
 		} finally {
