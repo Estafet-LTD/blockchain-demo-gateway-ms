@@ -130,7 +130,7 @@ public class EstacoinService {
 			span.setBaggageItem("toAddress", toAddress);
 			span.setBaggageItem("amount", String.valueOf(amount));
 			logger.info("transfer toAddress =" + toAddress+" amount= "+amount+" fromAddress="+fromAddress);
-			TransactionReceipt receipt = contract.transferFrom(fromAddress, toAddress, amount).send();
+			TransactionReceipt receipt = contract.transferWalletToWallet(fromAddress, toAddress, amount).send();
 			span.setBaggageItem("transactionHash", receipt.getTransactionHash());
 			span.setBaggageItem("blockHash", receipt.getBlockHash());
 			return receipt;
