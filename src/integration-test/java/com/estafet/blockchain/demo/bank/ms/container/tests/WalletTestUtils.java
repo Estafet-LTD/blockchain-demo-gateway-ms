@@ -8,7 +8,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletAddress;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
-import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
+import com.estafet.openshift.boost.commons.lib.properties.PropertyUtils;
 
 public class WalletTestUtils {
 

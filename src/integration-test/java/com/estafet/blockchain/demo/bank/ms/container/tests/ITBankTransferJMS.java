@@ -9,6 +9,8 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
+import com.estafet.openshift.boost.commons.lib.properties.PropertyUtils;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessage;
 import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentConfirmationMessage;
-import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

@@ -14,7 +14,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
-import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
+import com.estafet.openshift.boost.commons.lib.properties.PropertyUtils;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
