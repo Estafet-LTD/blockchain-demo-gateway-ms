@@ -4,6 +4,7 @@
     wiremock: false
     promote: true
     tests: true
+    restart: go-ethereum
 - release:
     db: false
 - promote:
