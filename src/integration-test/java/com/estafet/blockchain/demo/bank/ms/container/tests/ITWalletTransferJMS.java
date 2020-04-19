@@ -2,12 +2,6 @@ package com.estafet.blockchain.demo.bank.ms.container.tests;
 
 import static org.junit.Assert.*;
 
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.WalletPaymentMessage;
 import com.estafet.openshift.boost.commons.lib.properties.PropertyUtils;
