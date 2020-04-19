@@ -1,13 +1,13 @@
-- build:
-    db: false
-    mq: true
-    wiremock: false
-    promote: true
-    tests: true
-    restart: go-ethereum
-- release:
-    db: false
-- promote:
-    db: false
-    mq: true
-    expose: false
+build:
+  db: false
+  mq: true
+  wiremock: false
+  promote: true
+  tests: true
+  restart: go-ethereum
+release:
+  db: false
+promote:
+  db: false
+  mq: true
+  expose: false
