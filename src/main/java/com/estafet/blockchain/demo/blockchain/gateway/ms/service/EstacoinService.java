@@ -1,35 +1,8 @@
 package com.estafet.blockchain.demo.blockchain.gateway.ms.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-
-import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.UpdateWalletReceiverBalanceProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.ECKeyPair;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.Wallet;
-import org.web3j.crypto.WalletFile;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tx.gas.DefaultGasProvider;
-
 import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.BankPaymentConfirmationProducer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.UpdateWalletBalanceProducer;
-import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletAddress;
+import com.estafet.blockchain.demo.blockchain.gateway.ms.jms.UpdateWalletReceiverBalanceProducer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.web3j.Estacoin;
@@ -37,10 +10,24 @@ import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentBlockChainMessag
 import com.estafet.blockchain.demo.messages.lib.bank.BankPaymentConfirmationMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.UpdateWalletBalanceMessage;
 import com.estafet.blockchain.demo.messages.lib.wallet.WalletPaymentMessage;
-
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.tag.Tags;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tx.gas.DefaultGasProvider;
+
+import javax.annotation.PostConstruct;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class EstacoinService {
@@ -203,20 +190,6 @@ public class EstacoinService {
 		updateWalletBalanceMessage.setSignature("fjdjdjdjd");
 		updateWalletBalanceMessage.setWalletAddress(walletAddress);
 		return updateWalletBalanceMessage;
-	}
-
-	public WalletAddress createWalletAccount() {
-		try {
-			String seed = UUID.randomUUID().toString();
-			ECKeyPair ecKeyPair = Keys.createEcKeyPair();
-			WalletFile aWallet = Wallet.createLight(seed, ecKeyPair);
-			String sPrivatekeyInHex = ecKeyPair.getPrivateKey().toString(16);
-			Credentials.create(sPrivatekeyInHex);
-			return new WalletAddress(aWallet.getAddress());
-		} catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException
-				| CipherException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 }
