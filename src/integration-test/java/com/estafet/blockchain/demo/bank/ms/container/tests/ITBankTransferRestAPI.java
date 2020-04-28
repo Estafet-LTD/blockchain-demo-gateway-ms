@@ -32,7 +32,7 @@ public class ITBankTransferRestAPI {
 
 	@Test
 	public void testBankToWalletTransferRestAPI() {
-		String toAddress = "customAddress";
+		String toAddress = WalletTestUtils.generateWalletAddress();
 		WalletTransfer transfer = new WalletTransfer();
 		transfer.setAmount(new BigInteger("40"));
 		transfer.setToAddress(toAddress);

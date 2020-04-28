@@ -38,8 +38,8 @@ public class ITWalletTransferJMS {
 
 	@Test
 	public void testWallet2Wallet() throws InterruptedException {
-		String wallet1 = "walletAddress";
-		String wallet2 = "walletAddress-1";
+		String wallet1 = WalletTestUtils.generateWalletAddress();
+		String wallet2 = WalletTestUtils.generateWalletAddress();
 		
 		WalletTestUtils.initialiseAddress(wallet1, 240);
 		WalletTestUtils.initialiseAddress(wallet2, 30);

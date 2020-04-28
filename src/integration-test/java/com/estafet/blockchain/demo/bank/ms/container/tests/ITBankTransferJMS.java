@@ -41,7 +41,7 @@ public class ITBankTransferJMS {
 
 	@Test
 	public void testBank2Wallet() throws InterruptedException {
-		String walletAddress = "walletAddress";
+		String walletAddress = WalletTestUtils.generateWalletAddress();
 		BankPaymentBlockChainMessage bankPaymentBlockChainMessage = new BankPaymentBlockChainMessage();
 		bankPaymentBlockChainMessage.setCryptoAmount(40);
 		bankPaymentBlockChainMessage.setTransactionId("dhdhdhd");

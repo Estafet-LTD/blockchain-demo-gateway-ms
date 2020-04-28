@@ -1,8 +1,13 @@
 package com.estafet.blockchain.demo.bank.ms.container.tests;
 
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.util.UUID;
 
 import org.springframework.web.client.RestTemplate;
+import org.web3j.crypto.*;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
@@ -10,6 +15,20 @@ import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.openshift.boost.commons.lib.properties.PropertyUtils;
 
 public class WalletTestUtils {
+
+	public static String generateWalletAddress() {
+		try {
+			String seed = UUID.randomUUID().toString();
+			ECKeyPair ecKeyPair = Keys.createEcKeyPair();
+			WalletFile aWallet = Wallet.createLight(seed, ecKeyPair);
+			String sPrivatekeyInHex = ecKeyPair.getPrivateKey().toString(16);
+			Credentials.create(sPrivatekeyInHex);
+			return aWallet.getAddress();
+		} catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException
+				| CipherException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	private static String getBlockchainGatewayServiceURI() {
 		return PropertyUtils.instance().getProperty("BLOCKCHAIN_GATEWAY_MS_SERVICE_URL");
