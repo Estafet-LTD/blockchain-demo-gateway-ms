@@ -1,5 +1,10 @@
 setup:
 
+  - name: amq-setup
+    application_name: "{{ microservice.name }}"
+    amq_user: amq
+    amq_password: amq
+
   - name: restart-app
     app: go-ethereum
 
