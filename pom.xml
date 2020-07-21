@@ -75,8 +75,8 @@
 	</build>
 
 	<scm>
-		<connection>scm:git:https://github.com/Estafet-LTD/estafet-blockchain-demo-blockchain-gateway-ms.git</connection>
-		<developerConnection>scm:git:https://github.com/Estafet-LTD/estafet-blockchain-demo-blockchain-gateway-ms.git</developerConnection>
+		<connection>scm:git:https://github.com/Estafet-LTD/blockchain-demo-blockchain-gateway-ms.git</connection>
+		<developerConnection>scm:git:https://github.com/Estafet-LTD/blockchain-demo-blockchain-gateway-ms.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
