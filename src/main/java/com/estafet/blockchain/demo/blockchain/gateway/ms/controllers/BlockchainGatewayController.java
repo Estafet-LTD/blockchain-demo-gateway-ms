@@ -14,7 +14,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.service.EstacoinService;
-import com.estafet.openshift.boost.commons.lib.model.API;
+import com.estafet.boostcd.commons.model.API;
 
 @RestController
 public class BlockchainGatewayController {

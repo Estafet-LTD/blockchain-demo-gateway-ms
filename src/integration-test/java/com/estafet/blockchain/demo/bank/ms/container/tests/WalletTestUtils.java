@@ -7,12 +7,17 @@ import java.security.NoSuchProviderException;
 import java.util.UUID;
 
 import org.springframework.web.client.RestTemplate;
-import org.web3j.crypto.*;
+import org.web3j.crypto.CipherException;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.Wallet;
+import org.web3j.crypto.WalletFile;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletBalance;
 import com.estafet.blockchain.demo.blockchain.gateway.ms.model.WalletTransfer;
-import com.estafet.openshift.boost.commons.lib.properties.PropertyUtils;
+import com.estafet.boostcd.commons.properties.PropertyUtils;
 
 public class WalletTestUtils {
 
